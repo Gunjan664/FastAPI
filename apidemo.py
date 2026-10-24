@@ -62,7 +62,7 @@ def root():
 
 @app.get("/departments")
 def get_departments():
-    departments = list(department_collection.find({},{"_id": 0,"courseCode":0}))
+    departments = list(department_collection.find({},{"_id": 0}))
     return{"total": len(departments), "departments" : departments}
 
 @app.get("/students")
@@ -115,8 +115,8 @@ def delete_department(courseName : str , courseCode : str):
     result = department_collection.delete_one({"courseName" : courseName , "courseCode" : courseCode})
     if result.deleted_count == 0:
         raise HTTPException(
-            status = status.HTTP_404_NOT_FOUND,
-            details = f" {courseName} Department Doesnt exist" 
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = f" {courseName} Department Doesnt exist" 
         )
     return{
         "message" : "Department deleted"
@@ -135,7 +135,7 @@ def delete_student(course:str,roll_no:int):
 def register_user(user: NewUser):
     if user.role not in ["admin","student","faculty"]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            details="Cant register")
+                            detail="Cant register")
     user_dict = {"username" : user.username , 
                  "password" : hash_password(user.password) ,
                  "role" : user.role}
